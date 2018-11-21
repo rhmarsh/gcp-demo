@@ -12,5 +12,5 @@ spec:
       paths:
       - backend:
           serviceName: gcp-demo
-          servicePort: 60000
+          servicePort: gcp-port
   
