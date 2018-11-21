@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gcp-ingress
+spec:
+  tls:
+  - secretName: gcp-secret
+  - secretName: gcp-secret2
+  rules:
+  - host: your-store.example
+    http:
+      paths:
+      - backend:
+          serviceName: gcp-demo-service
+          servicePort: 60000
+  
