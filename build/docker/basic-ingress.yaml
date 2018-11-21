@@ -5,4 +5,4 @@ metadata:
 spec:
   backend:
     serviceName: web
-    servicePort: 60000
+    servicePort: gcp-port
