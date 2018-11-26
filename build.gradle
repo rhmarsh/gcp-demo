@@ -7,7 +7,8 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0")
+		/* classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0") */
+		classpath("se.transmode.gradle:gradle-docker:1.2")
 	}
 }
 
@@ -40,11 +41,32 @@ task copyJar(type: Copy) {
 	into 		'build/docker'
 }
 
-task buildDocker(type: Docker, dependsOn: copyJar) {
+/* task buildDocker(type: Docker, dependsOn: copyJar) {
     baseImage "java:8"
     runCommand("mkdir userservice")
     addFile("userservice-${project.version}.jar","userservice/")
     workingDir("/userservice")
     runCommand("unzip -q userservice-${project.version}.jar")
     entryPoint(["java","-Xms128m","-Xmx1024m","-cp", "/userservice-config:.","org.springframework.boot.loader.JarLauncher"])
+} */
+
+task buildDocker(type: Docker, dependsOn: copyJar) {
+    baseImage "gcr.io/lhi-ms/irs-jdk8:v1"
+    workingDir("/app")
+    addFile("build/libs/userservice-${project.version}.jar","/app/")
+    runCommand("unzip -q userservice-${project.version}.jar")
+	exposePort(8080)
+	exposePort(8081)
+    entryPoint(["java","-Xms128m","-Xmx1024m","-cp", "/userservice-config:.","org.springframework.boot.loader.JarLauncher"])
 }
+
+/* FROM 
+
+WORKDIR /app
+
+ADD build/libs/userservice-1.0.jar /app/userservice-1.0.jar
+
+EXPOSE 8080
+EXPOSE 8081
+
+ENTRYPOINT ["java", "-jar", "/app/userservice-1.0.jar"] */
